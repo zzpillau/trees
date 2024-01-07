@@ -2,14 +2,12 @@ env:
   node: true
   es2020: true
 extends:
-  - airbnb-base
+  - eslint: recommended
+  - plugin: prettier/recommended
 parserOptions:
   ecmaVersion: 11
   sourceType: module
 rules:
-  no-console: 0
-  import/extensions: # FIXME: remove when rule will be adjusted for new nodejs version
+  prettier/prettier:
     - error
-    - ignorePackages
-    - js: always
-  no-underscore-dangle: [2, { "allow": ["__filename", "__dirname"] }]
+    - endOfLine: auto
