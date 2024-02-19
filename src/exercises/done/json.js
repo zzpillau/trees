@@ -35,37 +35,35 @@ import _ from 'lodash';
 //   return `${value}`;
 // };
 
-// const stringify = (value, replacer = ' ', spacesCount = 1) => {
-//   const symbol = (r, s) => {
-//     return r.repeat(s);
-//   };
+const stringify = (value, replacer = ' ', spacesCount = 1) => {
+  const symbol = (replacer, count) => replacer.repeat(count);
 
-//   if (typeof value === 'object') {
-//     const keys = Object.keys(value ?? 'null');
-//     const reduce = keys.reduce((acc, key) => {
-//       if (value[key] === null) {
-//         value[key] = 'null';
-//       }
-//       if (typeof value[key] === 'object') {
-//         acc = `${acc}${symbol(replacer, spacesCount)}${key}: ${stringify(
-//           value[key],
-//           symbol(replacer, spacesCount),
-//           spacesCount,
-//         )}\n${symbol(replacer, spacesCount)}`;
+  if (typeof value === 'object') {
+    const keys = Object.keys(value ?? 'null');
+    const reduce = keys.reduce((acc, key) => {
+      if (value[key] === null) {
+        value[key] = 'null';
+      }
+      if (typeof value[key] === 'object') {
+        acc = `${acc}${symbol(replacer, spacesCount)}${key}: ${stringify(
+          value[key],
+          symbol(replacer, spacesCount),
+          spacesCount,
+        )}\n${symbol(replacer, spacesCount)}`;
 
-//         return acc;
-//       }
-//       console.log(spacesCount);
-//       acc = `${acc}${symbol(replacer, spacesCount)}${key}: ${
-//         value[key]
-//       }\n${symbol(replacer, spacesCount)}`;
+        return acc;
+      }
+      console.log(spacesCount);
+      acc = `${acc}${symbol(replacer, spacesCount)}${key}: ${
+        value[key]
+      }\n${symbol(replacer, spacesCount)}`;
 
-//       return acc;
-//     }, '');
-//     return `{\n${reduce}}`;
-//   }
-//   return `${value}`;
-// };
+      return acc;
+    }, '');
+    return `{\n${reduce}}`;
+  }
+  return `${value}`;
+};
 
 const nested = {
   string: 'value',
@@ -88,42 +86,41 @@ const nested = {
   },
 };
 
-const stringify = (value, replacer = ' ', spacesCount = 1) => {
-  const replacerTool = (r, s) => {
-    return r.repeat(s);
-  };
+// const stringify = (value, replacer = ' ', spacesCount = 1) => {
+//   const replacerTool = (r, s) => {
+//     return r.repeat(s);
+//   };
 
-  // задать n можно только итером
-  const iter = (depth, ) => {
-    if(n === )
-    if (!typeof value === 'object') {
-      return `${value}`;
-    }
-    const keys = Object.keys(value ?? 'null');
-    if (n === keys.length) {
-      return;
-    }
-    const reduce = keys.reduce((line, key) => {
-      if (value[key] === null) {
-        value[key] = 'null';
-      }
-      if (typeof value[key] === 'object') {
-        line = `${line}${replacerTool(
-          replacer,
-          spacesCount,
-        )}${key}: {\n${stringify(value[key], replacer, spacesCount)}\n`; //// str rec
+//   // задать n можно только итером
+//   const iter = (depth) => {
+//     if (!typeof value === 'object') {
+//       return `${value}`;
+//     }
+//     const keys = Object.keys(value ?? 'null');
+//     if (n === keys.length) {
+//       return;
+//     }
+//     const reduce = keys.reduce((line, key) => {
+//       if (value[key] === null) {
+//         value[key] = 'null';
+//       }
+//       if (typeof value[key] === 'object') {
+//         line = `${line}${replacerTool(
+//           replacer,
+//           spacesCount,
+//         )}${key}: {\n${stringify(value[key], replacer, spacesCount)}\n`; //// str rec
 
-        return line;
-      }
-      line = `${line}${replacerTool(replacer, spacesCount)}${key}: ${
-        value[key]
-      }\n`; //// str
-      return line;
-    }, '');
-    return `${reduce}${replacerTool(replacer, spacesCount)}}`;
-  };
-  return iter(1);
-};
+//         return line;
+//       }
+//       line = `${line}${replacerTool(replacer, spacesCount)}${key}: ${
+//         value[key]
+//       }\n`; //// str
+//       return line;
+//     }, '');
+//     return `${reduce}${replacerTool(replacer, spacesCount)}}`;
+//   };
+//   return iter(1);
+// };
 
 console.log(stringify(nested, '|-'));
 
