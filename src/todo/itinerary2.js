@@ -37,31 +37,78 @@ const make_flat = (tree, accumulator, parent = undefined) => {
   return node;
 };
 
-const flat = {};
-make_flat(tree, flat);
 // console.log('flat', JSON.stringify(flat, null, ' '));
 
 // console.log(flat['Moscow']);
 
-const itinerary = (tree, start, end) => {
-  const point = tree[start];
-  console.log(point.parent);
-  console.log(point.children);
+const flat = {};
+make_flat(tree, flat);
 
-  const children = point.children ?? [];
-  const parent = point.parent ?? [];
+const itinerary = (tree, start, end, result = []) => {
+  const [hub] = tree;
+  // console.log(hub);
+  result.push(start);
+  console.log('start res', result);
+  const after = [];
 
-  console.log(children);
-  console.log(parent);
+  const startPointInfo = flat[start];
+  console.log(startPointInfo);
 
-  // if (parent !== end) {
-  //   itinerary(point, point.parent, end);
-  // }
-  return end;
+  const children = startPointInfo.children;
+  const parent = startPointInfo.parent;
+
+  console.log('parent', parent);
+  console.log('children', children);
+
+  const workWithChildren = (childrenList, accum) => {
+    const wWC = (children) => {
+      children.forEach((child, i) => {
+        // console.log(child);
+        console.log(i, child);
+
+        const subChildren = flat[child].children;
+
+        if (subChildren.includes(end)) {
+          console.log("NOW I'LL PUSH");
+          result.push(child, end);
+          console.log('FOUND', accum);
+        }
+
+        if (subChildren.length > 0) {
+          console.log('recursion>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+          console.log();
+          wWC(subChildren);
+        }
+      });
+    };
+    return wWC(childrenList);
+  };
+
+  workWithChildren(children, after);
+  console.log('after', after);
+
+  if (parent === end || children.includes(end)) {
+    result.push(end);
+    return [result, 'first res'];
+  }
+
+  if (parent !== undefined) {
+    // result.push(parent);
+
+    itinerary(tree, parent, end, result);
+
+    workWithChildren(children, after);
+    console.log('after', after);
+
+    // return [result, after, 'rec'];
+  }
+  return result;
 };
 
-console.log(itinerary(flat, 'Dubna', 'Kostroma'));
+console.log(itinerary(tree, 'Dubna', 'Kostroma')); // ['Dubna', 'Tver', 'Moscow', 'Ivanovo', 'Kostroma']
 
-// console.log(itinerary(tree, 'Dubna', 'Kostroma')); // ['Dubna', 'Tver', 'Moscow', 'Ivanovo', 'Kostroma']
+console.log(itinerary(tree, 'Borisovka', 'Kurchatov')); // ['Borisovka', 'Belgorod', 'Kursk', 'Kurchatov']
 
-// console.log(itinerary(tree, 'Borisovka', 'Kurchatov')); // ['Borisovka', 'Belgorod', 'Kursk', 'Kurchatov']
+console.log(itinerary(tree, 'Rzhev', 'Moscow'));
+
+console.log(itinerary(tree, 'Ivanovo', 'Kursk'));
