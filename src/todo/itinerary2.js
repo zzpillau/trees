@@ -42,9 +42,11 @@ const make_flat = (tree, accumulator, parent = undefined) => {
 // console.log(flat['Moscow']);
 
 const flat = {};
-make_flat(tree, flat);
+console.log(flat);
 
 const itinerary = (tree, start, end, result = []) => {
+  make_flat(tree, flat);
+
   const [hub] = tree;
   // console.log(hub);
   result.push(start);
@@ -60,25 +62,51 @@ const itinerary = (tree, start, end, result = []) => {
   console.log('parent', parent);
   console.log('children', children);
 
-  const workWithChildren = (childrenList, accum) => {
-    const wWC = (children) => {
-      children.forEach((child, i) => {
-        // console.log(child);
-        console.log(i, child);
+  const workWithChildren = (childrenList) => {
+    let stack = [];
 
-        const subChildren = flat[child].children;
+    const wWC = (children) => {
+      children.forEach((child) => {
+        const subChildren = flat[child].children; // саб дети как массив
+        console.log(subChildren, 'subChildren');
+
+        if (stack.length) {
+          console.log('working on a stack', stack);
+          console.log('last', _.last(stack));
+          console.log('child.parent', flat[child].parent);
+          //   console.log('prelast', _.last(stack.slice(0, -1)));
+
+          const last = _.last(stack);
+          console.log('IS???????????????????????', flat[child].parent !== last);
+          if (flat[child].parent !== last) {
+            stack = [];
+          }
+          // else {
+          //   stack.pop();
+          // }
+        }
+
+        // console.log(child);
+        console.log(child);
+        stack.push(child);
+        console.log('stack push', stack);
 
         if (subChildren.includes(end)) {
-          console.log("NOW I'LL PUSH");
-          result.push(child, end);
-          console.log('FOUND', accum);
+          // если саб дети как массив содержат энд
+          console.log(stack, 'stack to push');
+          result.push(stack, end);
+          stack = [];
+          console.log("NOW I'LL PUSH the end");
+          // result.push(end);
+          console.log('FOUND');
         }
 
-        if (subChildren.length > 0) {
-          console.log('recursion>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-          console.log();
-          wWC(subChildren);
+        if (!subChildren.length) {
+          stack.pop();
         }
+
+        // stack = [];
+        wWC(subChildren);
       });
     };
     return wWC(childrenList);
@@ -89,7 +117,7 @@ const itinerary = (tree, start, end, result = []) => {
 
   if (parent === end || children.includes(end)) {
     result.push(end);
-    return [result, 'first res'];
+    return result;
   }
 
   if (parent !== undefined) {
@@ -102,13 +130,22 @@ const itinerary = (tree, start, end, result = []) => {
 
     // return [result, after, 'rec'];
   }
-  return result;
+  // return _.flattenDeep(result);
+  return _.flatten(result);
 };
 
-console.log(itinerary(tree, 'Dubna', 'Kostroma')); // ['Dubna', 'Tver', 'Moscow', 'Ivanovo', 'Kostroma']
+// console.log(itinerary(tree, 'Dubna', 'Kostroma')); // ['Dubna', 'Tver', 'Moscow', 'Ivanovo', 'Kostroma']
 
-console.log(itinerary(tree, 'Borisovka', 'Kurchatov')); // ['Borisovka', 'Belgorod', 'Kursk', 'Kurchatov']
+// console.log(itinerary(tree, 'Borisovka', 'Kurchatov')); // ['Borisovka', 'Belgorod', 'Kursk', 'Kurchatov']
 
-console.log(itinerary(tree, 'Rzhev', 'Moscow'));
+// console.log(itinerary(tree, 'Rzhev', 'Moscow'));
+// 'Rzhev', 'Tver', 'Moscow'
 
-console.log(itinerary(tree, 'Ivanovo', 'Kursk'));
+// console.log(itinerary(tree, 'Ivanovo', 'Kursk'));
+// 'Ivanovo', 'Moscow', 'Voronezh', 'Kursk'
+
+// console.log(itinerary(tree, 'Tver', 'Dubna'));
+// 'Tver', 'Dubna'
+
+console.log(itinerary(tree, 'Rzhev', 'Borisovka'));
+// 'Rzhev', 'Tver', 'Moscow', 'Voronezh', 'Kursk', 'Belgorod', 'Borisovka'
